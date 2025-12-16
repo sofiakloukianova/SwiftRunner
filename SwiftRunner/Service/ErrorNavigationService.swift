@@ -5,12 +5,11 @@
 //  Created by Sofia KL on 16.12.25.
 //
 
-
 import AppKit
 import Foundation
 
 @Observable
-final class OutputPaneViewModel {
+final class ErrorNavigationService {
     weak var textView: NSTextView?
 
     func jump(toLine line: Int, column col: Int, in text: String) {
@@ -22,7 +21,6 @@ final class OutputPaneViewModel {
         tv.window?.makeFirstResponder(tv)
     }
 
-    // 1-based line/column -> 0-based character offset
     private func offset(line: Int, column: Int, in text: String) -> Int {
         guard line > 0, column > 0 else { return 0 }
 

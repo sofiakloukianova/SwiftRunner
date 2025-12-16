@@ -10,8 +10,9 @@ import AppKit
 
 struct OutputPaneView: NSViewRepresentable {
     let output: String
+    let exitCode: Int?
     let onJump: (_ line: Int, _ column: Int) -> Void
-
+    
     func makeCoordinator() -> Coordinator {
         Coordinator(onJump: onJump)
     }
@@ -22,17 +23,16 @@ struct OutputPaneView: NSViewRepresentable {
         // Behavior
         textView.isEditable = false
         textView.isSelectable = true
-        textView.isRichText = true
-        textView.allowsUndo = false
+        textView.isRichText = true // Supports links
         textView.delegate = context.coordinator
         // Appearance
         textView.font = PaneTheme.nsFont
         textView.textColor = PaneTheme.textColor
-        textView.textContainerInset = PaneTheme.textInsets
         textView.backgroundColor = PaneTheme.outputBackground
+        textView.textContainerInset = PaneTheme.textInsets
         textView.linkTextAttributes = [
-            .foregroundColor: NSColor.red,
-            .underlineStyle: NSUnderlineStyle.single.rawValue
+            .foregroundColor: PaneTheme.linkColor,
+            .underlineStyle: PaneTheme.unterlineStyle
         ]
         // Layout
         textView.textContainer?.lineFragmentPadding = 0
@@ -51,7 +51,7 @@ struct OutputPaneView: NSViewRepresentable {
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let textView = scrollView.documentView as? NSTextView else { return }
         textView.textStorage?.setAttributedString(
-            context.coordinator.attributedOutput(from: output)
+            context.coordinator.attributedOutput(from: output, exitCode: exitCode ?? 0)
         )
     }
 
@@ -64,13 +64,13 @@ struct OutputPaneView: NSViewRepresentable {
             self.onJump = onJump
         }
 
-        // Matches: filename:line:column:
+        // Matches: filename:line:column: 
         private let regex: NSRegularExpression = {
             let pattern = #"(?m)([^:\n]+):(\d+):(\d+):"#
             return try! NSRegularExpression(pattern: pattern)
         }()
 
-        func attributedOutput(from output: String) -> NSAttributedString {
+        func attributedOutput(from output: String, exitCode: Int) -> NSAttributedString {
             let text = output.isEmpty ? "No output yet.\n" : output
 
             let baseAttributes: [NSAttributedString.Key: Any] = [
@@ -79,6 +79,11 @@ struct OutputPaneView: NSViewRepresentable {
             ]
 
             let result = NSMutableAttributedString(string: text, attributes: baseAttributes)
+            
+            // Only add links if an error occured
+            guard exitCode != 0 else {
+                return result
+            }
 
             let fullRange = NSRange(location: 0, length: (text as NSString).length)
 
@@ -89,7 +94,7 @@ struct OutputPaneView: NSViewRepresentable {
                     let col  = Int((text as NSString).substring(with: match.range(at: 3)))
                 else { return }
 
-                // Add link WITHOUT changing appearance
+                // Add link without changing appearance
                 let url = URL(string: "editorjump://\(line)/\(col)")!
                 result.addAttribute(.link, value: url, range: match.range(at: 0))
             }

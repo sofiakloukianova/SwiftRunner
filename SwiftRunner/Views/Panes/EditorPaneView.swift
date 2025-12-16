@@ -10,7 +10,7 @@ import AppKit
 
 struct EditorPaneView: NSViewRepresentable {
     @Binding var rawText: String
-    @State var jumpController: OutputPaneViewModel
+    @State var errorNavigatior: ErrorNavigationService
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -32,7 +32,7 @@ struct EditorPaneView: NSViewRepresentable {
         textView.insertionPointColor = .white
         textView.textContainerInset = PaneTheme.textInsets
         // Layout
-        textView.textContainer?.widthTracksTextView = true
+        textView.textContainer?.widthTracksTextView = false
         textView.isHorizontallyResizable = false
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = true
@@ -41,7 +41,7 @@ struct EditorPaneView: NSViewRepresentable {
             width: CGFloat.greatestFiniteMagnitude,
             height: CGFloat.greatestFiniteMagnitude
         )
-        jumpController.textView = textView
+        errorNavigatior.textView = textView
         
         // === 2) Make scroll view ===
         let scrollView = NSScrollView()

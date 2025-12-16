@@ -21,9 +21,10 @@ enum PaneTheme {
         Font(nsFont)
     }()
 
-    static let editorBackground = NSColor(Color.editorBackground)
-    static let outputBackground = NSColor(Color.outputBackground)
+    static let editorBackground = NSColor(Color(red: 41 / 255, green: 42 / 255, blue: 47 / 255))
+    static let outputBackground = NSColor(Color(red: 0x1E / 255, green: 0x1E / 255, blue: 0x1E / 255))
     static let textColor = NSColor.white
     static let linkColor = NSColor.red
+    static let unterlineStyle = NSUnderlineStyle.single.rawValue
     static let textInsets = NSSize(width: 10, height: 10)
 }
