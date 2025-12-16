@@ -12,8 +12,7 @@ struct SwiftRunnerApp: App {
     var body: some Scene {
         DocumentGroup(newDocument: EditorDocument()) { file in
             ContentView(document: file.$document, fileURL: file.fileURL)
-                .frame(minWidth: 1200, minHeight: 600)
         }
-        .windowResizability(.contentSize)
+        .defaultSize(width: 1200, height: 600)
     }
 }
