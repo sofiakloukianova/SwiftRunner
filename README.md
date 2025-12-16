@@ -21,17 +21,11 @@ errors for quick navigation.
 
 SwiftRunner is built using **SwiftUI + AppKit**:
 
-- `EditorPaneView` – NSTextView-backed code editor
-- `OutputPaneView` – Rich-text output with clickable diagnostics
+- `EditorPaneView` – NSTextView code editor
+- `OutputPaneView` – Code output with clickable diagnostics
 - `ScriptExecutor` – Runs Swift scripts in a background process
 - `ErrorNavigationService` – Maps compiler errors to editor positions
 - `PaneTheme` – Centralized styling and appearance settings
-
-## Requirements
-
-- macOS 13 or later
-- Xcode 15 or later
-- Swift 5.9 or later
 
 ## Build and Run Instructions
 
@@ -53,3 +47,5 @@ open SwiftRunner.xcodeproj
 ### 3. Build and run
 
 Press: ⌘ + R
+
+The project should now build and run without any additional configuration.
