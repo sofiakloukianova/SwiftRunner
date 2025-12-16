@@ -9,6 +9,7 @@ import AppKit
 import SwiftUI
 import Foundation
 
+/// Centralized theme configuration for editor and output panes.
 @Observable
 final class PaneTheme {
 
@@ -17,17 +18,14 @@ final class PaneTheme {
         case light
     }
 
-    // MARK: - User settings
     var fontSize: CGFloat = 13
     var fontWeight: NSFont.Weight = .regular
     var colorScheme: ColorScheme = .dark
-
-    // MARK: - Font
     var nsFont: NSFont {
         NSFont.monospacedSystemFont(ofSize: fontSize, weight: fontWeight)
     }
 
-    // MARK: - Editor colors
+    // MARK: - EditorPaneView & OutputPaneView
     var editorBackground: NSColor {
         switch colorScheme {
         case .dark:
@@ -54,6 +52,10 @@ final class PaneTheme {
             return .black
         }
     }
+    
+    let textInsets = NSSize(width: 10, height: 10)
+    let linkColor = NSColor.systemRed
+    let underlineStyle = NSUnderlineStyle.single.rawValue
 
     // MARK: - Syntax colors
     var baseColor: NSColor { textColor }
@@ -73,9 +75,4 @@ final class PaneTheme {
         ? NSColor(calibratedRed: 0.85, green: 0.79, blue: 0.5, alpha: 1)
         : NSColor(calibratedRed: 0.5, green: 0.45, blue: 0.2, alpha: 1)
     }
-
-    // MARK: - Layout
-    let textInsets = NSSize(width: 10, height: 10)
-    let linkColor = NSColor.systemRed
-    let underlineStyle = NSUnderlineStyle.single.rawValue
 }

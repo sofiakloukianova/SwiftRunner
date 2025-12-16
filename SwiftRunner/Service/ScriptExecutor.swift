@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 
+/// Executes Swift scripts in a background process and streams output in real time.
 @Observable
 final class ScriptExecutor {
 

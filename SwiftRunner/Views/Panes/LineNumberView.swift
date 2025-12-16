@@ -9,6 +9,7 @@ import Cocoa
 import SwiftUI
 import AppKit
 
+/// Vertical ruler view that renders line numbers alongside an NSTextView.
 final class LineNumberRulerView: NSRulerView {
     weak var textView: NSTextView?
     
@@ -31,7 +32,7 @@ final class LineNumberRulerView: NSRulerView {
             object: textView
         )
         
-        // Observer 2: Redraws vertical ruler when cursor moves to highlight current line
+        // Observer 2: Redraws vertical ruler when cursor moves to highlight current line number
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(textDidChange),

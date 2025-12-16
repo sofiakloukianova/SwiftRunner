@@ -29,7 +29,6 @@ struct SettingsView: View {
             .frame(width: 240)
         }
     }
-    
     var fontSizeAdjuster: some View {
         HStack {
             Text("Font Size")
@@ -43,7 +42,6 @@ struct SettingsView: View {
                 .frame(width: 30, alignment: .trailing)
         }
     }
-    
     var colorSchemes: some View {
         // Light / Dark mode
         HStack {
@@ -56,8 +54,4 @@ struct SettingsView: View {
             .pickerStyle(.segmented)
         }
     }
-    
-    
 }
-
-

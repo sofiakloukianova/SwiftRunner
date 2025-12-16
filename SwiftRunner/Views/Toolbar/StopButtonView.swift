@@ -18,6 +18,5 @@ struct StopButtonView: View {
             Image(systemName: "stop.fill")
         }
         .disabled(!isRunning)
-        .help("Stop script execution")
     }
 }

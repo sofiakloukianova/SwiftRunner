@@ -15,18 +15,26 @@ enum SyntaxHighlighter {
     ]
 
     // MARK: - Regexes
+    
+    private static let keywordRegex = makeRegex(
+        "\\b(" + keywords.joined(separator: "|") + ")\\b",
+        name: "keyword"
+    )
+    
+    private static let stringRegex = makeRegex(
+        "\"([^\"\\\\]|\\\\.)*\"",
+        name: "string"
+    )
 
-    private static let keywordRegex = try!
-        NSRegularExpression(pattern: "\\b(" + keywords.joined(separator: "|") + ")\\b")
+    private static let commentRegex = makeRegex(
+        "//.*",
+        name: "comment"
+    )
 
-    private static let stringRegex = try!
-        NSRegularExpression(pattern: "\"([^\"\\\\]|\\\\.)*\"")
-
-    private static let commentRegex = try!
-        NSRegularExpression(pattern: "//.*")
-
-    private static let numberRegex = try!
-        NSRegularExpression(pattern: "\\b\\d+(?:\\.\\d+)?\\b")
+    private static let numberRegex = makeRegex(
+        "\\b\\d+(?:\\.\\d+)?\\b",
+        name: "number"
+    )
 
     // MARK: - Public API
 
@@ -59,6 +67,14 @@ enum SyntaxHighlighter {
     }
 
     // MARK: - Helpers
+    
+    private static func makeRegex(_ pattern: String, name: String) -> NSRegularExpression {
+        do {
+            return try NSRegularExpression(pattern: pattern)
+        } catch {
+            fatalError("Invalid \(name) regex: \(error)")
+        }
+    }
 
     private static func applyBaseStyle(to textStorage: NSTextStorage, range: NSRange, theme: PaneTheme) {
         textStorage.setAttributes([.font: theme.nsFont, .foregroundColor: theme.baseColor], range: range)
@@ -70,11 +86,14 @@ enum SyntaxHighlighter {
         }
     }
     
-    private static func maskedText(_ text: String, masking ranges: [NSRange])-> String {
+    private static func maskedText(
+        _ text: String,
+        masking ranges: [NSRange]
+    ) -> String {
         var chars = Array(text)
         for range in ranges {
-            for i in range.location..<min(range.location + range.length, chars.count) {
-                chars[i] = " "
+            for index in range.location..<min(range.location + range.length, chars.count) {
+                chars[index] = " "
             }
         }
         return String(chars)

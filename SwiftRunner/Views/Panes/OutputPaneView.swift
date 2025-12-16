@@ -8,6 +8,7 @@
 import SwiftUI
 import AppKit
 
+/// Read-only output pane that supports clickable error locations.
 struct OutputPaneView: NSViewRepresentable {
     let output: String
     let exitCode: Int?
@@ -67,8 +68,7 @@ struct OutputPaneView: NSViewRepresentable {
         )
     }
 
-    // MARK: - Coordinator
-
+    // Handles link detection and click handling inside the output text view.
     final class Coordinator: NSObject, NSTextViewDelegate {
         private let onJump: (Int, Int) -> Void
 

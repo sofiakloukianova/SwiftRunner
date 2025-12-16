@@ -18,5 +18,3 @@ struct PlayButtonView: View {
         .disabled(isRunning)
     }
 }
-
-

@@ -8,6 +8,8 @@
 import AppKit
 import Foundation
 
+
+/// Coordinates navigation from compiler diagnostics (e.g. script:2:1: error)  to line and column locations in the editor.
 @Observable
 final class ErrorNavigationService {
     weak var textView: NSTextView?

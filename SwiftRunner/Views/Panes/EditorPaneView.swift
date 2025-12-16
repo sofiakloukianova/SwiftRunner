@@ -8,6 +8,8 @@
 import SwiftUI
 import AppKit
 
+
+/// SwiftUI wrapper around an `NSTextView` providing a code editor experience.
 struct EditorPaneView: NSViewRepresentable {
     @Binding var rawText: String
     @State var errorNavigatior: ErrorNavigationService
@@ -72,13 +74,13 @@ struct EditorPaneView: NSViewRepresentable {
         textView.backgroundColor = paneTheme.editorBackground
         textView.textColor = paneTheme.textColor
 
-        // SINGLE source of rendering truth
         SyntaxHighlighter.highlight(
             textView.textStorage!,
             theme: paneTheme
         )
     }
     
+    // Bridges NSTextView delegate callbacks back into SwiftUI.
     final class Coordinator: NSObject, NSTextViewDelegate {
         let parent: EditorPaneView
         let paneTheme: PaneTheme
@@ -94,7 +96,7 @@ struct EditorPaneView: NSViewRepresentable {
             // 1) Update SwiftUI model
             parent.rawText = textView.string
 
-            // 2) REAL-TIME highlighting (AppKit side)
+            // 2) Real time highlighting
             SyntaxHighlighter.highlight(
                 textView.textStorage!,
                 theme: paneTheme
