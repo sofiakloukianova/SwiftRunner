@@ -11,6 +11,7 @@ import AppKit
 struct OutputPaneView: NSViewRepresentable {
     let output: String
     let exitCode: Int?
+    let paneTheme: PaneTheme
     let onJump: (_ line: Int, _ column: Int) -> Void
     
     func makeCoordinator() -> Coordinator {
@@ -26,13 +27,13 @@ struct OutputPaneView: NSViewRepresentable {
         textView.isRichText = true // Supports links
         textView.delegate = context.coordinator
         // Appearance
-        textView.font = PaneTheme.nsFont
-        textView.textColor = PaneTheme.textColor
-        textView.backgroundColor = PaneTheme.outputBackground
-        textView.textContainerInset = PaneTheme.textInsets
+        textView.font = paneTheme.nsFont
+        textView.textColor = paneTheme.textColor
+        textView.backgroundColor = paneTheme.outputBackground
+        textView.textContainerInset = paneTheme.textInsets
         textView.linkTextAttributes = [
-            .foregroundColor: PaneTheme.linkColor,
-            .underlineStyle: PaneTheme.unterlineStyle
+            .foregroundColor: paneTheme.linkColor,
+            .underlineStyle: paneTheme.underlineStyle
         ]
         // Layout
         textView.textContainer?.lineFragmentPadding = 0
@@ -50,8 +51,19 @@ struct OutputPaneView: NSViewRepresentable {
 
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let textView = scrollView.documentView as? NSTextView else { return }
+        
+        // Keep appearance in sync
+        textView.font = paneTheme.nsFont
+        textView.textColor = paneTheme.textColor
+        textView.backgroundColor = paneTheme.outputBackground
+
+        // Single source of truth: attributed output
         textView.textStorage?.setAttributedString(
-            context.coordinator.attributedOutput(from: output, exitCode: exitCode ?? 0)
+            context.coordinator.attributedOutput(
+                from: output,
+                exitCode: exitCode ?? 0,
+                theme: paneTheme
+            )
         )
     }
 
@@ -70,12 +82,12 @@ struct OutputPaneView: NSViewRepresentable {
             return try! NSRegularExpression(pattern: pattern)
         }()
 
-        func attributedOutput(from output: String, exitCode: Int) -> NSAttributedString {
+        func attributedOutput(from output: String, exitCode: Int, theme: PaneTheme) -> NSAttributedString {
             let text = output.isEmpty ? "No output yet.\n" : output
 
             let baseAttributes: [NSAttributedString.Key: Any] = [
-                .font: NSFont.monospacedSystemFont(ofSize: 13, weight: .regular),
-                .foregroundColor: NSColor.white
+                .font: theme.nsFont,
+                .foregroundColor: theme.textColor
             ]
 
             let result = NSMutableAttributedString(string: text, attributes: baseAttributes)

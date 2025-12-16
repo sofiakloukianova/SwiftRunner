@@ -13,6 +13,8 @@ struct ContentView: View {
     // Service
     @State private var executor = ScriptExecutor()
     @State private var errorNavigator = ErrorNavigationService()
+    // Appearance
+    @State private var paneTheme = PaneTheme()
     
     let fileURL: URL?
     
@@ -23,8 +25,8 @@ struct ContentView: View {
     var body: some View {
         HSplitView {
             Group {
-                EditorPaneView(rawText: $document.text, errorNavigatior: errorNavigator)
-                OutputPaneView(output: executor.output, exitCode: executor.lastExitCode) { line, col in
+                EditorPaneView(rawText: $document.text, errorNavigatior: errorNavigator, paneTheme: paneTheme)
+                OutputPaneView(output: executor.output, exitCode: executor.lastExitCode, paneTheme: paneTheme) { line, col in
                     errorNavigator.jump(toLine: line, column: col, in: document.text)
                 }
             }
@@ -39,7 +41,7 @@ struct ContentView: View {
             StopButtonView(isRunning: executor.isRunning) {
                 executor.stop()
             }
-            SettingsButtonView()
+            SettingsView(paneTheme: paneTheme)
         }
     }
 }

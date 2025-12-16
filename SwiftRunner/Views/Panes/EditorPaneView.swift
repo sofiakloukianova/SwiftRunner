@@ -11,9 +11,10 @@ import AppKit
 struct EditorPaneView: NSViewRepresentable {
     @Binding var rawText: String
     @State var errorNavigatior: ErrorNavigationService
+    let paneTheme: PaneTheme
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(parent: self, paneTheme: paneTheme)
     }
     
     func makeNSView(context: Context) -> NSScrollView {
@@ -26,11 +27,11 @@ struct EditorPaneView: NSViewRepresentable {
         textView.isAutomaticTextCompletionEnabled = false
         textView.delegate = context.coordinator
         // Appearance
-        textView.font = PaneTheme.nsFont
-        textView.backgroundColor = PaneTheme.editorBackground
-        textView.textColor = PaneTheme.textColor
+        textView.font = paneTheme.nsFont
+        textView.backgroundColor = paneTheme.editorBackground
+        textView.textColor = paneTheme.textColor
         textView.insertionPointColor = .white
-        textView.textContainerInset = PaneTheme.textInsets
+        textView.textContainerInset = paneTheme.textInsets
         // Layout
         textView.textContainer?.widthTracksTextView = false
         textView.isHorizontallyResizable = false
@@ -60,25 +61,44 @@ struct EditorPaneView: NSViewRepresentable {
     
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let textView = scrollView.documentView as? NSTextView else { return }
-
+        
+        // Keep text in sync
         if textView.string != rawText {
             textView.string = rawText
-            SyntaxHighlighter.highlight(textView.textStorage!)
         }
+
+        // Keep appearance in sync
+        textView.font = paneTheme.nsFont
+        textView.backgroundColor = paneTheme.editorBackground
+        textView.textColor = paneTheme.textColor
+
+        // SINGLE source of rendering truth
+        SyntaxHighlighter.highlight(
+            textView.textStorage!,
+            theme: paneTheme
+        )
     }
     
     final class Coordinator: NSObject, NSTextViewDelegate {
         let parent: EditorPaneView
+        let paneTheme: PaneTheme
 
-        init(_ parent: EditorPaneView) {
+        init(parent: EditorPaneView, paneTheme: PaneTheme) {
             self.parent = parent
+            self.paneTheme = paneTheme
         }
 
         func textDidChange(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else { return }
 
+            // 1) Update SwiftUI model
             parent.rawText = textView.string
-            SyntaxHighlighter.highlight(textView.textStorage!)
+
+            // 2) REAL-TIME highlighting (AppKit side)
+            SyntaxHighlighter.highlight(
+                textView.textStorage!,
+                theme: paneTheme
+            )
         }
     }
 }

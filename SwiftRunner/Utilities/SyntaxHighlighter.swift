@@ -9,17 +9,6 @@ import AppKit
 
 enum SyntaxHighlighter {
 
-    // MARK: - Configuration
-
-    private static let baseFont =
-        NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
-
-    private static let baseColor    = NSColor.white
-    private static let commentColor = NSColor.systemGray
-    private static let keywordColor = NSColor(calibratedRed: 255.0/255.0, green: 122.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-    private static let stringColor  = NSColor(calibratedRed: 255.0/255.0, green: 129.0/255.0, blue: 122.0/255.0, alpha: 1.0)
-    private static let numberColor  = NSColor(calibratedRed: 217.0/255.0, green: 202.0/255.0, blue: 127.0/255.0, alpha: 1.0)
-    
     private static let keywords = [
         "func", "struct", "class", "enum", "let", "static",
         "var", "if", "else", "return", "import", "for", "in"
@@ -41,38 +30,38 @@ enum SyntaxHighlighter {
 
     // MARK: - Public API
 
-    static func highlight(_ textStorage: NSTextStorage) {
+    static func highlight(_ textStorage: NSTextStorage, theme: PaneTheme) {
         let fullRange = NSRange(location: 0, length: textStorage.length)
         let source = textStorage.string
 
-        applyBaseStyle(to: textStorage, range: fullRange)
+        applyBaseStyle(to: textStorage, range: fullRange, theme: theme)
 
         // 1. Hightlight comments
         let commentRanges = ranges(matching: commentRegex, in: source, range: fullRange)
-        applyHightlight(color: commentColor, to: textStorage, ranges: commentRanges)
+        applyHightlight(color: theme.commentColor, to: textStorage, ranges: commentRanges)
 
         // 2. Mask comments before string matching
         let commentMaskedSource = maskedText(source, masking: commentRanges)
 
         // 3. Highlight strings
         let stringRanges = ranges(matching: stringRegex, in: commentMaskedSource, range: fullRange)
-        applyHightlight(color: stringColor, to: textStorage, ranges: stringRanges)
+        applyHightlight(color: theme.stringColor, to: textStorage, ranges: stringRanges)
 
         let protectedRanges = commentRanges + stringRanges
 
         // 3. Highlight numbers (excluding comments & strings)
         let numberRanges = ranges(matching: numberRegex, in: source, range: fullRange, excluding: protectedRanges)
-        applyHightlight(color: numberColor, to: textStorage, ranges: numberRanges)
+        applyHightlight(color: theme.numberColor, to: textStorage, ranges: numberRanges)
 
         // 4. Highlight keywords (excluding comments & strings)
         let keywordRanges = ranges(matching: keywordRegex, in: source, range: fullRange, excluding: protectedRanges)
-        applyHightlight(color: keywordColor, to: textStorage, ranges: keywordRanges)
+        applyHightlight(color: theme.keywordColor, to: textStorage, ranges: keywordRanges)
     }
 
     // MARK: - Helpers
 
-    private static func applyBaseStyle(to textStorage: NSTextStorage, range: NSRange) {
-        textStorage.setAttributes([.font: baseFont, .foregroundColor: baseColor], range: range)
+    private static func applyBaseStyle(to textStorage: NSTextStorage, range: NSRange, theme: PaneTheme) {
+        textStorage.setAttributes([.font: theme.nsFont, .foregroundColor: theme.baseColor], range: range)
     }
 
     private static func applyHightlight(color: NSColor, to textStorage: NSTextStorage, ranges: [NSRange]) {
