@@ -42,3 +42,16 @@ SwiftRunner is built using **SwiftUI + AppKit**:
 ```bash
 git clone https://github.com/<your-username>/SwiftRunner.git
 cd SwiftRunner
+```
+
+### 2. Open the Xcode project
+
+Open the project file:
+
+```bash
+open SwiftRunner.xcodeproj
+```
+
+### 3. Build and run
+
+Press: ⌘ + R
