@@ -15,9 +15,7 @@ errors for quick navigation.
 - Stop running scripts at any time
 
 ## Screenshots
-
-> _(Optional, but highly recommended)_
-> Add 1–2 screenshots of the editor and output pane.
+<img width="1053" height="585" alt="screenshot1" src="https://github.com/user-attachments/assets/c62ecdbb-0b5d-43c2-bc90-b35ef92591d2" />
 
 ## Architecture Overview
 
